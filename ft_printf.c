@@ -288,10 +288,36 @@ char	*format_d(int nb)
 	return (ret);
 }
 
-// char	*flag_d(char *format, char *flag)
-// {
+char	*flag_d(char *format, char *flag)
+{
+	int		width;
+	int		precision;
+	char	*ret;
+	int		zero;
+	int		i;
+	int		j;
 
-// }
+	zero = 0;
+	if (flag[0] == '0')
+		zero = 1;
+	width = ft_atoi_flag_c(flag + zero);
+	while (flag[i] && flag[i] != '.')
+		i++;
+	if (flag[i] == '.')
+	{
+		precision = ft_atoi_flag_c(flag + i + zero + 1);
+		zero = 0;
+	}
+	else
+		precision = -1;
+	i = 0;
+	j = 0;
+	while (width > 0)
+	{
+		if ()
+		width--;
+	}
+}
 
 //********************** FCT INIT *********************
 
@@ -394,6 +420,5 @@ int ft_printf(char const *fmt, ...)
 
 int main()
 {
-	ft_printf("ft:| %.15s %100s %-8.35s|\n", "Coco", "Tristan", NULL);
-	printf("ft:| %.15s %100s %-8.35s|\n", "Coco", "Tristan", NULL);
+	ft_printf("|%s|\n","salut");
 }
