@@ -224,54 +224,43 @@ char	*flag_s(char *format, char *flag)
 		precision = ft_atoi_flag_c(flag + i + 1);
 	else
 		precision = - 1;
-	len = (precision < 0) ? ft_strlen(format) : precision; 
+	len = ft_strlen(format);
+	if (precision > len)
+		precision = len;
 	if (!(ret = (char*)ft_calloc(sizeof(char), ft_strlen(format) + (ABS(precision)) + (ABS(width)))))
 		return (NULL);
 	i = 0;
 	j = 0;
-	if (width > 0)
+	while (width > 0)
 	{
-		while (width > len)
+		if (width > precision)
 		{
 			ret[i] = ' ';
 			i++;
 			width--;
 		}
-		while (len && format[j])
+		else if (precision && format[j])
 		{
-			ret[i] = format[j];
-			i++;
-			j++;
-			len--;
+			ret[i++] = format[j++];
+			precision--;
 		}
-		ret[i] = 0;
+		width--;
 	}
-	else if (width < 0)
+	while (width < 0)
 	{
-		while (len && format[j])
+		if (precision && format[j])
 		{
-			ret[i] = format[j];
-			i++;
-			j++;
-			len--;
+			ret[i++] = format[j++];
+			precision--;
 			width++;
 		}
-		while (width < 0)
+		else if (width < 0)
 		{
-			ret[i] = ' ';
-			i++;
+			ret[i++] = ' ';
 			width++;
 		}
-		ret[i] = 0;
 	}
-	else
-		while (len && format[j])
-		{
-			ret[i] = format[j];
-			i++;
-			j++;
-			len--;
-		}
+	ret[i] = 0;
 	free(format);
 	free(flag);
 	return (ret);
@@ -288,6 +277,8 @@ char	*format_d(int nb)
 	return (ret);
 }
 
+char	*insert_string(char *str, char *to_insert, int start, int end);
+
 char	*flag_d(char *format, char *flag)
 {
 	int		width;
@@ -296,27 +287,71 @@ char	*flag_d(char *format, char *flag)
 	int		zero;
 	int		i;
 	int		j;
+	int		len;
+	int		signe;
 
+	signe = 0;
+	len = ft_strlen(format);
 	zero = 0;
 	if (flag[0] == '0')
 		zero = 1;
-	width = ft_atoi_flag_c(flag + zero);
+	if (flag[zero] == '-')
+		signe = 1;
+	width = ft_atoi_flag_c(flag + zero + signe);
+	i = 0;
 	while (flag[i] && flag[i] != '.')
 		i++;
 	if (flag[i] == '.')
 	{
-		precision = ft_atoi_flag_c(flag + i + zero + 1);
+		precision = ft_atoi_flag_c(flag + i + 1);
 		zero = 0;
 	}
 	else
 		precision = -1;
+	if (precision < 0 && zero)
+		precision = width;
+	printf("preci:%d width:%d len:%d i:%d\n", precision, width, len, i);
 	i = 0;
 	j = 0;
-	while (width > 0)
+	if(!(ret = (char*)ft_calloc(sizeof(char), len + (ABS(width)) + (ABS(precision)))))
+		return (NULL);
+	while (width > 0 && !signe)
 	{
-		if ()
+		if (width > precision && width > len && (precision > len || precision < 0))
+			ret[i++] = ' ';
+		else if (precision > len)
+		{
+			ret[i++] = '0';
+			precision--;
+		}
+		else if (len)
+		{
+			ret[i++] = format[j++];
+			precision--;
+			len--;
+		}
 		width--;
 	}
+	while (width > 0 && signe)
+	{
+		if (precision > len)
+		{
+			ret[i++] = '0';
+			precision--;
+		}
+		else if (len)
+		{
+			ret[i++] = format[j++];
+			precision--;
+			len--;
+		}
+		else if (width)
+			ret[i++] = ' ';
+		width--;	
+	}
+	free(format);
+	free(flag);
+	return (ret);
 }
 
 //********************** FCT INIT *********************
@@ -326,12 +361,14 @@ t_fonction	*fonction_format_init(void)
 	t_fonction	*fonct;
 
 	fonct = (t_fonction*)malloc(sizeof(t_fonction) * 26);
-	
+
 	(fonct + 'c' - 'a')->f = &format_c;
 	(fonct + 's' - 'a')->f = &format_s;
+	(fonct + 'd' - 'a')->f = &format_d;
 
 	(fonct + 'c' - 'a')->flag = &flag_c;
 	(fonct + 's' - 'a')->flag = &flag_s;
+	(fonct + 'd' - 'a')->flag = &flag_d;
 	return (fonct);
 }
 
@@ -400,16 +437,19 @@ int ft_printf(char const *fmt, ...)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i++] == '%')
+		if (str[i] == '%')
 		{
 			j = i;
-			while (str[i] && !ft_isalpha(str[i]))
-				i++;
+			while (str[++i] && !ft_isalpha(str[i]))
+				if (str[i] == '*')
+					str = insert_string(str, ft_itoa(va_arg(ap, int)), i, i + 1);
 			format = (fonct + str[i] - 'a')->f(va_arg(ap, void*));
-			format = (fonct + str[i] - 'a')->flag(format, read_flag(str + j));
-			str = insert_string(str, format, j - 1, i + 1);
+			printf("read %s\n", read_flag(str + j + 1));
+			format = (fonct + str[i] - 'a')->flag(format, read_flag(str + j + 1));
+			str = insert_string(str, format, j, i + 1);
 			i = j;
 		}
+		i++;
 	}
 	ft_putstr(str);
 	free(str);
@@ -420,5 +460,9 @@ int ft_printf(char const *fmt, ...)
 
 int main()
 {
-	ft_printf("|%s|\n","salut");
+	printf("///s///\n");
+	ft_printf("ft: %.15s %100s %-8.35s %.*s|\n", "Coco", "Tristan", NULL, -15, "lol");
+	printf("pf: %.15s %100s %-8.35s %.*s|\n", "Coco", "Tristan", NULL, -15, "lol");
+	printf("\n");
+	printf("%*.5s", 0,"salut");
 }
