@@ -138,221 +138,13 @@ char	*ft_itoa(int nb)
 	return (ft_strrev(str));
 }
 
-//************************ FORMAT C ***************************
-
-int		ft_atoi_flag_c(char *str)
-{
-	int i;
-	int ret;
-	int signe;
-
-	i = 0;
-	ret = 0;
-	signe = (*str == '-') ? -1 : 1;
-	while (str[i] == '-')
-		i++;
-	while (ft_isdigit(str[i]))
-	{
-		ret = (ret * 10) + ((str[i] - '0') * signe);
-		i++;
-	}
-	return (ret);
-}
-
-char	*format_c(int c)
-{
-	char	*str;
-
-	if (!(str = (char*)malloc(sizeof(char) * 2)))
-		return (NULL);
-	str[0] = c;
-	str[1] = 0;
-	return (str);
-}
-
-char	*flag_c(char *format, char *flag)
-{
-	int		i;
-	int		width;
-	char	*ret;
-
-	i = 0;
-	width = ABS(ft_atoi_flag_c(flag));
-	if (!(ret = (char*)ft_calloc(sizeof(char), width + 2)))
-		return (NULL);
-	while (width > 1)
-	{
-		ret[i++] = ' ';
-		width--;
-	}
-	ret[i++] = *format;
-	ret[i] = 0;
-	ret = (ft_atoi_flag_c(flag) < 0) ? ft_strrev(ret) : ret;
-	free(format);
-	free(flag);
-	return (ret);
-}
-
 //********************** FLAG S ***********************
 
-char	*format_s(char *str)
-{
-	char *ret;
 
-	if (!str)
-		return (ft_strdup("(null)"));
-	if(!(ret = ft_strdup(str)))
-		return (NULL);
-	return (ret);
-}
-
-
-char	*flag_s(char *format, char *flag)
-{
-	int		width;
-	int		precision;
-	char	*ret;
-	int		i;
-	int 	j;
-	int		len;
-
-	i = 0;
-	width = ft_atoi_flag_c(flag);
-	while (flag[i] != '.' && flag[i])
-		i++;
-	if (flag[i] == '.')
-		precision = ft_atoi_flag_c(flag + i + 1);
-	else
-		precision = - 1;
-	len = ft_strlen(format);
-	if (precision > len)
-		precision = len;
-	if (!(ret = (char*)ft_calloc(sizeof(char), ft_strlen(format) + (ABS(precision)) + (ABS(width)))))
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (width > 0)
-	{
-		if (width > precision)
-		{
-			ret[i] = ' ';
-			i++;
-			width--;
-		}
-		else if (precision && format[j])
-		{
-			ret[i++] = format[j++];
-			precision--;
-		}
-		width--;
-	}
-	while (width < 0)
-	{
-		if (precision && format[j])
-		{
-			ret[i++] = format[j++];
-			precision--;
-			width++;
-		}
-		else if (width < 0)
-		{
-			ret[i++] = ' ';
-			width++;
-		}
-	}
-	ret[i] = 0;
-	free(format);
-	free(flag);
-	return (ret);
-}
 
 //********************** FORMAT D **********************
 
-char	*format_d(int nb)
-{
-	char	*ret;
 
-	if (!(ret = ft_itoa(nb)))
-		return (NULL);
-	return (ret);
-}
-
-char	*insert_string(char *str, char *to_insert, int start, int end);
-
-char	*flag_d(char *format, char *flag)
-{
-	int		width;
-	int		precision;
-	char	*ret;
-	int		zero;
-	int		i;
-	int		j;
-	int		len;
-	int		signe;
-
-	signe = 0;
-	len = ft_strlen(format);
-	zero = 0;
-	if (flag[0] == '0')
-		zero = 1;
-	if (flag[zero] == '-')
-		signe = 1;
-	width = ft_atoi_flag_c(flag + zero + signe);
-	i = 0;
-	while (flag[i] && flag[i] != '.')
-		i++;
-	if (flag[i] == '.')
-	{
-		precision = ft_atoi_flag_c(flag + i + 1);
-		zero = 0;
-	}
-	else
-		precision = -1;
-	if (precision < 0 && zero)
-		precision = width;
-	printf("preci:%d width:%d len:%d i:%d\n", precision, width, len, i);
-	i = 0;
-	j = 0;
-	if(!(ret = (char*)ft_calloc(sizeof(char), len + (ABS(width)) + (ABS(precision)))))
-		return (NULL);
-	while (width > 0 && !signe)
-	{
-		if (width > precision && width > len && (precision > len || precision < 0))
-			ret[i++] = ' ';
-		else if (precision > len)
-		{
-			ret[i++] = '0';
-			precision--;
-		}
-		else if (len)
-		{
-			ret[i++] = format[j++];
-			precision--;
-			len--;
-		}
-		width--;
-	}
-	while (width > 0 && signe)
-	{
-		if (precision > len)
-		{
-			ret[i++] = '0';
-			precision--;
-		}
-		else if (len)
-		{
-			ret[i++] = format[j++];
-			precision--;
-			len--;
-		}
-		else if (width)
-			ret[i++] = ' ';
-		width--;	
-	}
-	free(format);
-	free(flag);
-	return (ret);
-}
 
 //********************** FCT INIT *********************
 
@@ -413,7 +205,7 @@ char	*read_flag(char *str)
 	if (!(ret = (char*)malloc(sizeof(char) * (i + 1))))
 		return (NULL);
 	i = 0;
-	while(!ft_isalpha(str[i]))
+	while (!ft_isalpha(str[i]))
 	{
 		ret[i] = str[i];
 		i++;
@@ -444,7 +236,6 @@ int ft_printf(char const *fmt, ...)
 				if (str[i] == '*')
 					str = insert_string(str, ft_itoa(va_arg(ap, int)), i, i + 1);
 			format = (fonct + str[i] - 'a')->f(va_arg(ap, void*));
-			printf("read %s\n", read_flag(str + j + 1));
 			format = (fonct + str[i] - 'a')->flag(format, read_flag(str + j + 1));
 			str = insert_string(str, format, j, i + 1);
 			i = j;
@@ -460,9 +251,22 @@ int ft_printf(char const *fmt, ...)
 
 int main()
 {
+	printf("\n///c///\n");
+	ft_printf("ft: %c %5c %-4c|\n", 'a', '	', '7');
+	printf("pf: %c %5c %-4c|\n", 'a', '	', '7');
+	printf("\n");
 	printf("///s///\n");
 	ft_printf("ft: %.15s %100s %-8.35s %.*s|\n", "Coco", "Tristan", NULL, -15, "lol");
 	printf("pf: %.15s %100s %-8.35s %.*s|\n", "Coco", "Tristan", NULL, -15, "lol");
 	printf("\n");
-	printf("%*.5s", 0,"salut");
+	// printf("///p///\n");
+	// ft = ft_printf("ft: %----24p et hello %2p %12.p %53p\n", ptr, ptr, NULL, ptr);
+	// true = printf("pf: %----24p et hello %2p %12.p %53p\n", ptr, ptr, NULL, ptr);
+	// printf("ft: %d\n", ft);
+	// printf("pf: %d\n", true);
+	// printf("\n");
+	printf("///d///\n");
+	ft_printf("ft: %01.*d %7d %-9d %05d %*d %0*d %03.*d|\n", 8, -18, 18, 18, 18, -8, 18, -8, 18, -15, 5);
+	printf("pf: %01.*d %7d %-9d %05d %*d %0*d %03.*d|\n", 8, -18, 18, 18, 18, -8, 18, -8, 18, -15, 5);
+	printf("\n");
 }
