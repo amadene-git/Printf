@@ -80,6 +80,7 @@ char	*format_x_maj(unsigned int nb);
 char	*format_u(unsigned int nb);
 
 //************* FORMAT P ***********
+
 char	*format_p(void	*ptr);
 char	*flag_p_null(char *format);
 char	*flag_p_positive(int width, int precision, char *format, char *ret);
