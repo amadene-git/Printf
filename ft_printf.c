@@ -138,12 +138,136 @@ char	*ft_itoa(int nb)
 	return (ft_strrev(str));
 }
 
-//********************** FLAG S ***********************
+int		malloc_len_unsigned_lhex(unsigned long int nb)
+{
+	int	i;
+
+	i = 0;
+	while (nb > 0)
+	{
+		nb /= 16;
+		i++;
+	}
+	return (i);
+}
+
+char	*ft_utoxa(unsigned int nb)
+{
+	unsigned long int	my_nb;
+	int					n;
+	char				*str;
+	char				tab[] = "0123456789abcdef";
+
+	if (nb == 0)
+		return (ft_strdup("0"));
+	my_nb = (unsigned long int)nb;
+	if (!(str = (char*)malloc(sizeof(char)\
+	* (malloc_len_unsigned_lhex(my_nb) + 1))))
+		return (NULL);
+	n = 0;
+	while (my_nb > 0)
+	{
+		str[n++] = tab[my_nb % 16];
+		my_nb /= 16;
+	}
+	str[n] = '\0';
+	return (ft_strrev(str));
+}
+
+char	*ft_utoxa_maj(unsigned int nb)
+{
+	unsigned long int	my_nb;
+	int					n;
+	char				*str;
+	char				tab[] = "0123456789ABCDEF";
+
+	if (nb == 0)
+		return (ft_strdup("0"));
+	my_nb = (unsigned long int)nb;
+	if (!(str = (char*)malloc(sizeof(char)\
+	* (malloc_len_unsigned_lhex(my_nb) + 1))))
+		return (NULL);
+	n = 0;
+	while (my_nb > 0)
+	{
+		str[n++] = tab[my_nb % 16];
+		my_nb /= 16;
+	}
+	str[n] = '\0';
+	return (ft_strrev(str));
+}
+
+int		malloc_len_unsigned_ll(unsigned long int nb)
+{
+	int	i;
+
+	i = 0;
+	while (nb > 0)
+	{
+		nb /= 10;
+		i++;
+	}
+	return (i);
+}
+
+char	*ft_utoa(unsigned int nb)
+{
+	unsigned long int	my_nb;
+	int					n;
+	char				*str;
+
+	if (nb == 0)
+		return (ft_strdup("0"));
+	my_nb = (unsigned long int)nb;
+	if (!(str = (char*)malloc(sizeof(char)\
+	* (malloc_len_unsigned_ll(my_nb) + 1))))
+		return (NULL);
+	n = 0;
+	while (my_nb > 0)
+	{
+		str[n++] = (my_nb % 10) + '0';
+		my_nb /= 10;
+	}
+	str[n] = '\0';
+	return (ft_strrev(str));
+}
+
+int		malloc_len_unsigned_lluh(unsigned long long int nb)
+{
+	int	i;
+
+	i = 0;
+	while (nb > 0)
+	{
+		nb /= 16;
+		i++;
+	}
+	return (i);
+}
+
+char	*ft_llutoxa(unsigned long long int nb)
+{
+	int		i;
+	char	*str;
+	char	tab[] = "0123456789abcdef";
+
+	if (nb == 0)
+		return (ft_strdup("0"));
+	if (!(str = (char*)malloc(sizeof(char)\
+	* (malloc_len_unsigned_lluh(nb) + 1))))
+		return (NULL);
+	i = 0;
+	while (nb > 0)
+	{
+		str[i++] = tab[nb % 16];
+		nb /= 16;
+	}
+	str[i] = '\0';
+	return (ft_strrev(str));
+}
 
 
-
-//********************** FORMAT D **********************
-
+//********************** FORMAT X ********************
 
 
 //********************** FCT INIT *********************
@@ -152,15 +276,25 @@ t_fonction	*fonction_format_init(void)
 {
 	t_fonction	*fonct;
 
-	fonct = (t_fonction*)malloc(sizeof(t_fonction) * 26);
+	fonct = (t_fonction*)malloc(sizeof(t_fonction) * 128);
 
-	(fonct + 'c' - 'a')->f = &format_c;
-	(fonct + 's' - 'a')->f = &format_s;
-	(fonct + 'd' - 'a')->f = &format_d;
+	(fonct + 'c')->f = &format_c;
+	(fonct + 's')->f = &format_s;
+	(fonct + 'd')->f = &format_d;
+	(fonct + 'x')->f = &format_x;
+	(fonct + 'X')->f = &format_x_maj;
+	(fonct + 'i')->f = &format_d;
+	(fonct + 'u')->f = &format_u;
+	(fonct + 'p')->f = &format_p;
 
-	(fonct + 'c' - 'a')->flag = &flag_c;
-	(fonct + 's' - 'a')->flag = &flag_s;
-	(fonct + 'd' - 'a')->flag = &flag_d;
+	(fonct + 'c')->flag = &flag_c;
+	(fonct + 's')->flag = &flag_s;
+	(fonct + 'd')->flag = &flag_d;
+	(fonct + 'x')->flag = &flag_d;
+	(fonct + 'X')->flag = &flag_d;
+	(fonct + 'i')->flag = &flag_d;
+	(fonct + 'u')->flag = &flag_d;
+	(fonct + 'p')->flag = &flag_p;
 	return (fonct);
 }
 
@@ -214,6 +348,17 @@ char	*read_flag(char *str)
 	return (ret);
 }
 
+int		is_format(char c)
+{
+	if (c == 'c' ||
+	c == 'p' ||
+	c == 'd' ||
+	c == 'i' ||
+	c == 's' || c == 'u' || c == 'x' || c == 'X')
+		return (1);
+	return (0);
+}
+
 int ft_printf(char const *fmt, ...)
 {
 	int			i;
@@ -227,6 +372,7 @@ int ft_printf(char const *fmt, ...)
 	va_start(ap, fmt);
 	str = ft_strdup(fmt);
 	i = 0;
+	j = 0;
 	while (str[i])
 	{
 		if (str[i] == '%')
@@ -235,12 +381,24 @@ int ft_printf(char const *fmt, ...)
 			while (str[++i] && !ft_isalpha(str[i]))
 				if (str[i] == '*')
 					str = insert_string(str, ft_itoa(va_arg(ap, int)), i, i + 1);
-			format = (fonct + str[i] - 'a')->f(va_arg(ap, void*));
-			format = (fonct + str[i] - 'a')->flag(format, read_flag(str + j + 1));
-			str = insert_string(str, format, j, i + 1);
+			if (str[j + 1] == '%')
+			{
+				str = insert_string(str, ft_strdup(""), j, j + 1);
+				j++;
+			}
+			else if (is_format(str[i]))
+			{
+				format = (fonct + str[i])->f(va_arg(ap, void*));
+				format = (fonct + str[i])->flag(format, read_flag(str + j + 1));
+				str = insert_string(str, format, j, i + 1);
+			}
+			else
+				j++;
+			
 			i = j;
 		}
-		i++;
+		else
+			i++;
 	}
 	ft_putstr(str);
 	free(str);
@@ -251,22 +409,43 @@ int ft_printf(char const *fmt, ...)
 
 int main()
 {
+	char *ptr = malloc(1);
+
 	printf("\n///c///\n");
-	ft_printf("ft: %c %5c %-4c|\n", 'a', '	', '7');
-	printf("pf: %c %5c %-4c|\n", 'a', '	', '7');
+	ft_printf("ft: %c %5c %-4c\n", 'a', '	', '7');
+	printf("pf: %c %5c %-4c\n", 'a', '	', '7');
 	printf("\n");
 	printf("///s///\n");
-	ft_printf("ft: %.15s %100s %-8.35s %.*s|\n", "Coco", "Tristan", NULL, -15, "lol");
-	printf("pf: %.15s %100s %-8.35s %.*s|\n", "Coco", "Tristan", NULL, -15, "lol");
+	ft_printf("ft: %.15s %100s %-8.35s %.*s\n", "Coco", "Tristan", NULL, -15, "lol");
+	printf("pf: %.15s %100s %-8.35s %.*s\n", "Coco", "Tristan", NULL, -15, "lol");
 	printf("\n");
-	// printf("///p///\n");
-	// ft = ft_printf("ft: %----24p et hello %2p %12.p %53p\n", ptr, ptr, NULL, ptr);
-	// true = printf("pf: %----24p et hello %2p %12.p %53p\n", ptr, ptr, NULL, ptr);
-	// printf("ft: %d\n", ft);
-	// printf("pf: %d\n", true);
-	// printf("\n");
+	printf("///p///\n");
+	ft_printf("ft: %----24p et hello %2p %12.p %53p\n", ptr, ptr, NULL, ptr);
+	printf("pf: %----24p et hello %2p %12.p %53p\n", ptr, ptr, NULL, ptr);
+	printf("\n");
 	printf("///d///\n");
-	ft_printf("ft: %01.*d %7d %-9d %05d %*d %0*d %03.*d|\n", 8, -18, 18, 18, 18, -8, 18, -8, 18, -15, 5);
-	printf("pf: %01.*d %7d %-9d %05d %*d %0*d %03.*d|\n", 8, -18, 18, 18, 18, -8, 18, -8, 18, -15, 5);
+	ft_printf("ft: %01.*d %7d %-9d %05d %*d %0*d %03.*d\n", 8, -18, 18, 18, 18, -8, 18, -8, 18, -15, 5);
+	printf("pf: %01.*d %7d %-9d %05d %*d %0*d %03.*d\n", 8, -18, 18, 18, 18, -8, 18, -8, 18, -15, 5);
 	printf("\n");
+	printf("///i///\n");
+	ft_printf("ft: %i %7i |%-4i| |%05i|\n", 256, 18, -1024, 29);
+	printf("pf: %i %7i |%-4i| |%05i|\n", 256, 18, -1024, 29);
+	printf("\n");
+	printf("///u///\n");
+	ft_printf("ft: %u %7u %-9u %05u\n", -5, 1024, 0, 29);
+	printf("pf: %u %7u %-9u %05u\n", -5, 1024, 0, 29);
+	printf("\n");
+	printf("///x///\n");
+	ft_printf("ft: %x %7x %-9x %05x\n", 256, 1024, 0, 29);
+	printf("pf: %x %7x %-9x %05x\n", 256, 1024, 0, 29);
+	printf("\n");
+	printf("///X///\n");
+	ft_printf("ft: %X %7X %-9X %05X\n", 256, 1024, 0, 29);
+	printf("pf: %X %7X %-9X %05X\n", 256, 1024, 0, 29);
+	printf("\n");
+	printf("///%%///\n");
+	//ft_printf("ft: %% %5% %08% %-3% %.8% %10.10% %%%%  \n");
+	printf("pf: %% %5% %08% %-3% %.8% %10.10% %%%%  \n");
+	printf("\n");
+	
 }

@@ -1,27 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   format_d.c                                         :+:      :+:    :+:   */
+/*   format_p.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: admadene <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/12/01 15:04:41 by admadene          #+#    #+#             */
-/*   Updated: 2019/12/01 15:04:43 by admadene         ###   ########.fr       */
+/*   Created: 2019/12/01 17:49:51 by admadene          #+#    #+#             */
+/*   Updated: 2019/12/01 17:50:03 by admadene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-char	*format_d(int nb)
+char	*format_p(void *ptr)
 {
 	char	*ret;
 
-	if (!(ret = ft_itoa(nb)))
+	if (!(ret = ft_llutoxa((unsigned long long int)ptr)))
+		return (NULL);
+	if (!(ret = insert_string(ret, ft_strdup("0x"), 0, 0)))
 		return (NULL);
 	return (ret);
 }
 
-char	*flag_d_positive(int width, int precision, char *format, char *ret)
+char	*flag_p_null(char *format)
+{
+	char	*ret;
+
+	if (!(ret = ft_strdup("0x")))
+		return (NULL);
+	free(format);
+	return (ret);
+}
+
+char	*flag_p_positive(int width, int precision, char *format, char *ret)
 {
 	int i;
 	int j;
@@ -30,13 +42,8 @@ char	*flag_d_positive(int width, int precision, char *format, char *ret)
 	j = 0;
 	while (width > 0)
 	{
-		if (width > precision)
+		if (width > ft_strlen(format))
 			ret[i++] = ' ';
-		else if (precision > ft_strlen(format))
-		{
-			ret[i++] = '0';
-			precision--;
-		}
 		else if (format[j])
 		{
 			ret[i++] = format[j++];
@@ -49,7 +56,7 @@ char	*flag_d_positive(int width, int precision, char *format, char *ret)
 	return (ret);
 }
 
-char	*flag_d_negative(int width, int precision, char *format, char *ret)
+char	*flag_p_negative(int width, int precision, char *format, char *ret)
 {
 	int i;
 	int j;
@@ -58,12 +65,7 @@ char	*flag_d_negative(int width, int precision, char *format, char *ret)
 	j = 0;
 	while (width < 0)
 	{
-		if (precision > ft_strlen(format))
-		{
-			ret[i++] = '0';
-			precision--;
-		}
-		else if (format[j])
+		if (format[j])
 		{
 			ret[i++] = format[j++];
 			precision--;
@@ -77,28 +79,12 @@ char	*flag_d_negative(int width, int precision, char *format, char *ret)
 	return (ret);
 }
 
-char	*flag_d_null(char *format)
-{
-	char	*ret;
-
-	if (!(ret = ft_strdup("")))
-		return (NULL);
-	free(format);
-	return (ret);
-}
-
-char	*flag_d(char *format, char *flag)
+char	*flag_p(char *format, char *flag)
 {
 	int		width;
 	int		precision;
 	int		zero;
-	int		signe;
 
-	if (!(signe = 0) && format[0] == '-')
-	{
-		signe = 1;
-		format++;
-	}
 	if (!(zero = 0) && flag[0] == '0')
 		zero = 1;
 	set_flag(flag, &precision, &width, &zero);
@@ -107,11 +93,10 @@ char	*flag_d(char *format, char *flag)
 	if (!(flag = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
 	+ (ABS(width)) + (ABS(precision)))))
 		return (NULL);
-	format = (format[0] == '0' && precision == 0)\
-	? flag_d_null(format) : format;
-	flag = (width > 0) ? flag_d_positive(width, precision, format, flag)\
-	: flag_d_negative(width, precision, format, flag);
-	flag = (signe) ? put_minus(flag) : flag;
-	free(format - signe);
+	format = (ft_strlen(format) == 3 && precision == 0)\
+	? flag_p_null(format) : format;
+	flag = (width > 0) ? flag_p_positive(width, precision, format, flag)\
+	: flag_p_negative(width, precision, format, flag);
+	free(format);
 	return (flag);
 }

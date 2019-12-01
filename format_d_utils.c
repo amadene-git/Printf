@@ -34,6 +34,10 @@ char	*put_minus(char *ret)
 		ret = insert_string(ret, ft_strdup("-"), i - 1, i);
 	else
 		ret = insert_string(ret, ft_strdup("-"), 0, 0);
+	while (ret[i] == '-' || ft_isdigit(ret[i]))
+		i++;
+	if (ret[i] == ' ')
+		ret = insert_string(ret, strdup(""), i, i + 1);
 	return (ret);
 }
 
@@ -41,7 +45,7 @@ void	set_width_and_precision(int zero, int *precision, int *width, int len)
 {
 	if (*precision < 0 && zero)
 		*precision = *width;
-	else if ((*precision < 0 && !zero) || *precision < len)
+	else if ((*precision < 0 && !zero) || (*precision < len && *precision))
 		*precision = len;
 	if (*width > 0 && *precision > *width)
 		*width = *precision;

@@ -35,7 +35,13 @@ void	ft_putstr(char *str);
 char	*ft_strrev(char *str);
 int		malloc_len(long int nb);
 char	*ft_itoa(int nb);
-
+int		malloc_len_unsigned_lhex(unsigned long int nb);
+char	*ft_utoxa(unsigned int nb);
+char	*ft_utoxa_maj(unsigned int nb);
+int		malloc_len_unsigned_ll(unsigned long int nb);
+char	*ft_utoa(unsigned int nb);
+int		malloc_len_unsigned_lluh(unsigned long long int nb);
+char	*ft_llutoxa(unsigned long long int nb);
 
 //*********** FORMAT C *********
 
@@ -60,6 +66,25 @@ char	*flag_d_after(int i, int precision, char *ret, char *format);
 char	*put_minus(char *ret);
 void	set_width_and_precision(int zero, int *precision, int *width, int len);
 void	set_flag(char *flag, int *precision, int *width, int *zero);
+
+//********** FORMAT X ***************
+
+char	*format_x(unsigned int nb);
+
+//********** FORMAT X MAJ ************
+
+char	*format_x_maj(unsigned int nb);
+
+//************* FORMAT U *************
+
+char	*format_u(unsigned int nb);
+
+//************* FORMAT P ***********
+char	*format_p(void	*ptr);
+char	*flag_p_null(char *format);
+char	*flag_p_positive(int width, int precision, char *format, char *ret);
+char	*flag_p_negative(int width, int precision, char *format, char *ret);
+char	*flag_p(char *format, char *flag);
 
 //********** FT_PRINTF *************
 
