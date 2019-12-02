@@ -101,7 +101,7 @@ char	*flag_s(char *format, char *flag)
 	if (precision > ft_strlen(format) || precision < 0)
 		precision = ft_strlen(format);
 	if (!(ret = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
-	+ (ABS(precision)) + (ABS(width)))))
+	+ (abs(precision)) + (abs(width)))))
 		return (NULL);
 	if (width > 0)
 		ret = flag_s_positive(width, precision, format, ret);

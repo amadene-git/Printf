@@ -88,10 +88,10 @@ char	*flag_p(char *format, char *flag)
 	if (!(zero = 0) && flag[0] == '0')
 		zero = 1;
 	set_flag(flag, &precision, &width, &zero);
-	set_width_and_precision(zero, &precision, &width, ft_strlen(format));
+	set_width_and_precis(zero, &precision, &width, ft_strlen(format));
 	free(flag);
 	if (!(flag = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
-	+ (ABS(width)) + (ABS(precision)))))
+	+ (abs(width)) + (abs(precision)))))
 		return (NULL);
 	format = (ft_strlen(format) == 3 && precision == 0)\
 	? flag_p_null(format) : format;

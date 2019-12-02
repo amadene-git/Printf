@@ -37,11 +37,11 @@ char	*put_minus(char *ret)
 	while (ret[i] == '-' || ft_isdigit(ret[i]))
 		i++;
 	if (ret[i] == ' ')
-		ret = insert_string(ret, strdup(""), i, i + 1);
+		ret = insert_string(ret, ft_strdup(""), i, i + 1);
 	return (ret);
 }
 
-void	set_width_and_precision(int zero, int *precision, int *width, int len)
+void	set_width_and_precis(int zero, int *precision, int *width, int len)
 {
 	if (*precision < 0 && zero)
 		*precision = *width;

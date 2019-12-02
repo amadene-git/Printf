@@ -49,7 +49,7 @@ char	*flag_c(char *format, char *flag)
 	char	*ret;
 
 	i = 0;
-	width = ABS(ft_atoi_flag_c(flag));
+	width = abs(ft_atoi_flag_c(flag));
 	if (!(ret = (char*)ft_calloc(sizeof(char), width + 2)))
 		return (NULL);
 	while (width > 1)
