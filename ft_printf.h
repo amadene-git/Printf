@@ -89,6 +89,6 @@ void			structure_init(t_printf *ws, char const *fmt);
 void			convert_format(t_printf *ws);
 char			*delete_char_one(char *str);
 void			end_ft_printf(t_printf *ws);
-int				ft_printf(char const *fmt, ...);
+int				ft_printf(const char *fmt, ...);
 
 #endif

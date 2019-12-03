@@ -45,7 +45,7 @@ void	convert_format(t_printf *ws)
 	ws->str = insert_string(ws->str, ws->format, ws->j, ws->i + 1);
 }
 
-int		ft_printf(char const *fmt, ...)
+int		ft_printf(const char *fmt, ...)
 {
 	t_printf ws;
 
