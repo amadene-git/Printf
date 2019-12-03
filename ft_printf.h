@@ -67,6 +67,7 @@ char			*flag_d_after(int i, int precision, char *ret, char *format);
 char			*put_minus(char *ret);
 void			set_width_and_precis(int zero, int *preci, int *width, int len);
 void			set_flag(char *flag, int *precision, int *width, int *zero);
+int				len_f(char *format, int precision);
 char			*format_x(unsigned int nb);
 char			*format_x_maj(unsigned int nb);
 char			*format_u(unsigned int nb);
@@ -86,6 +87,8 @@ char			*get_wildcard(char *str, int *i, va_list *ap);
 char			*get_percent(char *str, char *format, int *i, int *j);
 void			structure_init(t_printf *ws, char const *fmt);
 void			convert_format(t_printf *ws);
+char			*delete_char_one(char *str);
+void			end_ft_printf(t_printf *ws);
 int				ft_printf(char const *fmt, ...);
 
 #endif

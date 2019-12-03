@@ -28,9 +28,10 @@ char	*flag_d_positive(int width, int precision, char *format, char *ret)
 
 	i = 0;
 	j = 0;
+	width = (width < precision) ? precision : width;
 	while (width > 0)
 	{
-		if (width > precision)
+		if (width > precision && width > ft_strlen(format))
 			ret[i++] = ' ';
 		else if (precision > ft_strlen(format))
 		{
@@ -44,7 +45,7 @@ char	*flag_d_positive(int width, int precision, char *format, char *ret)
 		}
 		width--;
 	}
-	if (ft_strlen(format) > j && precision)
+	if (ft_strlen(format) > j)
 		ret = flag_d_after(i, precision, ret, format + j);
 	return (ret);
 }
@@ -56,6 +57,7 @@ char	*flag_d_negative(int width, int precision, char *format, char *ret)
 
 	i = 0;
 	j = 0;
+	width = (abs(width) < precision) ? precision * -1 : width;
 	while (width < 0)
 	{
 		if (precision > ft_strlen(format))
@@ -102,10 +104,10 @@ char	*flag_d(char *format, char *flag)
 	if (!(zero = 0) && flag[0] == '0')
 		zero = 1;
 	set_flag(flag, &precision, &width, &zero);
-	set_width_and_precis(zero, &precision, &width, ft_strlen(format));
+	set_width_and_precis(zero, &precision, &width, len_f(format, precision));
 	free(flag);
 	if (!(flag = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
-	+ (abs(width)) + (abs(precision)))))
+	+ (abs(width)) + (abs(precision) + 1))))
 		return (NULL);
 	format = (format[0] == '0' && precision == 0)\
 	? flag_d_null(format) : format;

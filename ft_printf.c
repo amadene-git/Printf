@@ -66,10 +66,7 @@ int		ft_printf(char const *fmt, ...)
 		}
 		else
 			ws.i++;
-	ft_putstr(ws.str);
-	ws.i = ft_strlen(ws.str);
-	free(ws.str);
-	free(ws.fonct);
+	end_ft_printf(&ws);
 	va_end(ws.ap);
 	return (ws.i);
 }
