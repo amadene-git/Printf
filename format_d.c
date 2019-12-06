@@ -89,31 +89,31 @@ char	*flag_d_null(char *format)
 	return (ret);
 }
 
-char	*flag_d(char *format, char *flag)
+char	*flag_d(char *fmt, char *flag)
 {
 	int		width;
 	int		precision;
 	int		zero;
 	int		signe;
+	char	*ret;
 
-	if (!(signe = 0) && format[0] == '-')
+	if (!(signe = 0) && fmt[0] == '-')
 	{
 		signe = 1;
-		format++;
+		fmt++;
 	}
 	if (!(zero = 0) && flag[0] == '0')
 		zero = 1;
 	set_flag(flag, &precision, &width, &zero);
-	set_width_and_precis(zero, &precision, &width, len_f(format, precision));
-	free(flag);
-	if (!(flag = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
+	set_width_and_precis(zero, &precision, &width, len_f(fmt, precision));
+	if (!(ret = (char*)ft_calloc(sizeof(char), ft_strlen(fmt)\
 	+ (abs(width)) + (abs(precision) + 1))))
 		return (NULL);
-	format = (format[0] == '0' && precision == 0)\
-	? flag_d_null(format) : format;
-	flag = (width > 0) ? flag_d_positive(width, precision, format, flag)\
-	: flag_d_negative(width, precision, format, flag);
-	flag = (signe) ? put_minus(flag) : flag;
-	free(format - signe);
-	return (flag);
+	fmt = (fmt[0] == '0' && precision == 0) ? flag_d_null(fmt) : fmt;
+	ret = (width > 0) ? flag_d_positive(width, precision, fmt, ret)\
+	: flag_d_negative(width, precision, fmt, ret);
+	ret = (signe) ? put_minus(ret, flag) : ret;
+	free(flag);
+	free(fmt - signe);
+	return (ret);
 }

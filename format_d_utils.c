@@ -23,16 +23,24 @@ char	*flag_d_after(int i, int precision, char *ret, char *format)
 	return (ret);
 }
 
-char	*put_minus(char *ret)
+char	*put_minus(char *ret, char *flag)
 {
 	int i;
+	int width;
+	int	zero;
+	int precision;
 
+	if (!(zero = 0) && flag[0] == '0')
+		zero = 1;
+	set_flag(flag, &precision, &width, &zero);
 	i = 0;
 	while (!ft_isdigit(ret[i]) && ret[i])
 		i++;
 	if (i != 0)
 		ret = insert_string(ret, ft_strdup("-"), i - 1, i);
-	else if (ret[0] != '0')
+	else if (ret[0] != '0' || width == 0 || width == 1)
+		ret = insert_string(ret, ft_strdup("-"), 0, 0);
+	else if (!zero && ret[0] == '0' && (width > 1 || width < -1))
 		ret = insert_string(ret, ft_strdup("-"), 0, 0);
 	else
 		ret = insert_string(ret, ft_strdup("-"), 0, 1);

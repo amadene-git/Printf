@@ -64,7 +64,7 @@ char			*flag_d_positive(int width, int preci, char *format, char *ret);
 char			*flag_d_negative(int width, int preci, char *format, char *ret);
 char			*flag_d(char *format, char *flag);
 char			*flag_d_after(int i, int precision, char *ret, char *format);
-char			*put_minus(char *ret);
+char			*put_minus(char *ret, char *flag);
 void			set_width_and_precis(int zero, int *preci, int *width, int len);
 void			set_flag(char *flag, int *precision, int *width, int *zero);
 int				len_f(char *format, int precision);
