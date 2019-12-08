@@ -35,14 +35,20 @@ void	structure_init(t_printf *ws, char const *fmt)
 	ws->str = ft_strdup(fmt);
 	ws->i = 0;
 	ws->j = 0;
+	ws->len = 0;
 }
 
 void	convert_format(t_printf *ws)
 {
 	ws->format = (ws->fonct + ws->str[ws->i])->f(va_arg(ws->ap, void*));
-	ws->format = (ws->fonct + ws->str[ws->i])->flag(ws->format,\
-	read_flag(ws->str + ws->j + 1));
-	ws->str = insert_string(ws->str, ws->format, ws->j, ws->i + 1);
+	if (ws->str[ws->i] == 'c' && (ws->format[0] == 0 || ws->format[0] == '%'))
+		print_format_c(ws);
+	else
+	{
+		ws->format = (ws->fonct + ws->str[ws->i])->flag(ws->format,\
+		read_flag(ws->str + ws->j + 1));
+		ws->str = insert_string(ws->str, ws->format, ws->j, ws->i + 1);
+	}
 }
 
 int		ft_printf(const char *fmt, ...)
@@ -68,5 +74,5 @@ int		ft_printf(const char *fmt, ...)
 			ws.i++;
 	end_ft_printf(&ws);
 	va_end(ws.ap);
-	return (ws.i);
+	return (ws.len);
 }

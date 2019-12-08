@@ -89,12 +89,13 @@ char	*flag_p(char *format, char *flag)
 		zero = 1;
 	set_flag(flag, &precision, &width, &zero);
 	set_width_and_precis(zero, &precision, &width, ft_strlen(format));
+	format = (ft_strlen(format) == 3 && precision == 0)\
+	? flag_p_null(format) : format;
+	width = (ft_strlen(format) == 2 && ft_atoi_flag_c(flag) <= 2 && ft_atoi_flag_c(flag) >= -2) ? 2 : width;
 	free(flag);
 	if (!(flag = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
 	+ (abs(width)) + (abs(precision)))))
 		return (NULL);
-	format = (ft_strlen(format) == 3 && precision == 0)\
-	? flag_p_null(format) : format;
 	flag = (width > 0) ? flag_p_positive(width, precision, format, flag)\
 	: flag_p_negative(width, precision, format, flag);
 	free(format);

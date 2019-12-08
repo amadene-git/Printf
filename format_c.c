@@ -37,10 +37,7 @@ char	*format_c(int c)
 
 	if (!(str = (char*)malloc(sizeof(char) * 2)))
 		return (NULL);
-	if (c)
-		str[0] = c;
-	else
-		str[0] = 1;
+	str[0] = c;
 	str[1] = 0;
 	return (str);
 }

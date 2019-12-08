@@ -27,6 +27,7 @@ typedef	struct	s_printf
 {
 	int			i;
 	int			j;
+	int			len;
 	char		*str;
 	char		*format;
 	t_fonction	*fonct;
@@ -87,7 +88,7 @@ char			*get_wildcard(char *str, int *i, va_list *ap);
 char			*get_percent(char *str, char *format, int *i, int *j);
 void			structure_init(t_printf *ws, char const *fmt);
 void			convert_format(t_printf *ws);
-char			*delete_char_one(char *str);
+void			print_format_c(t_printf *ws);
 void			end_ft_printf(t_printf *ws);
 int				ft_printf(const char *fmt, ...);
 

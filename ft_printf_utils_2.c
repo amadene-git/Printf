@@ -12,21 +12,38 @@
 
 #include "ft_printf.h"
 
-char	*delete_char_one(char *str)
+void			print_format_c(t_printf *ws)
 {
-	int i;
+	int		n;
+	int		width;
+	char	*tmp;
 
-	i = -1;
-	while (str[++i])
-		if (str[i] == 1)
-			str = insert_string(str, ft_strdup(""), i, i + 1);
-	return (str);
+	n = 0;
+	width = ft_atoi_flag_c(ws->str + ws->j + 1);
+	write(1, ws->str, ws->j);
+	ws->len += (width) ? abs(width) + ws->j : ws->j + 1;
+	while (width > 1)
+	{
+		write(1, " ", 1);
+		width--;
+	}
+	write(1, &ws->format[0], 1);
+	while (width < -1)
+	{
+		write(1, " ", 1);
+		width++;
+	}
+	tmp = ws->str;
+	ws->str = ft_strdup(ws->str + ws->i + 1);
+	ws->i = 0;
+	ws->j = 0;
+	free(tmp);
+	free(ws->format);
 }
 
 void	end_ft_printf(t_printf *ws)
 {
-	ws->i = ft_strlen(ws->str);
-	ws->str = delete_char_one(ws->str);
+	ws->len += ft_strlen(ws->str);
 	ft_putstr(ws->str);
 	free(ws->str);
 	free(ws->fonct);
