@@ -91,7 +91,8 @@ char	*flag_p(char *format, char *flag)
 	set_width_and_precis(zero, &precision, &width, ft_strlen(format));
 	format = (ft_strlen(format) == 3 && precision == 0)\
 	? flag_p_null(format) : format;
-	width = (ft_strlen(format) == 2 && ft_atoi_flag_c(flag) <= 2 && ft_atoi_flag_c(flag) >= -2) ? 2 : width;
+	width = (ft_strlen(format) == 2 && ft_atoi_flag_c(flag) <= 2\
+	&& ft_atoi_flag_c(flag) >= -2) ? 2 : width;
 	free(flag);
 	if (!(flag = (char*)ft_calloc(sizeof(char), ft_strlen(format)\
 	+ (abs(width)) + (abs(precision)))))

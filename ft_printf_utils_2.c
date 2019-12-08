@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-void			print_format_c(t_printf *ws)
+void	print_format_c(t_printf *ws)
 {
 	int		n;
 	int		width;
